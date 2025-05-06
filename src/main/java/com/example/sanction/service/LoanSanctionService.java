@@ -7,6 +7,10 @@ public interface LoanSanctionService
 
 	String addSanctionDetails(LoanSanctionDTO loanSanctionDTO);
 
+
+	Object getMonthlyEmi(Integer sanctionId);
+
 	String calculateEligibleLoanAmount(Integer sanctionId);
+
 
 }
