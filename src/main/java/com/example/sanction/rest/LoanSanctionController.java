@@ -3,6 +3,8 @@ package com.example.sanction.rest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,4 +28,14 @@ public class LoanSanctionController
 		ApiResponse<String> apiResponse=new ApiResponse<String>(msg);
 		return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.CREATED);
 	}
+	
+	
+	@GetMapping(value = "/{sanctionId}")
+	public ResponseEntity<ApiResponse<Object>> getMonthlyEmi(@PathVariable Integer sanctionId)
+	{
+		Object emi=loanSanctionService.getMonthlyEmi(sanctionId);
+		ApiResponse<Object> apiResponse=new ApiResponse<Object>(emi);
+		return new ResponseEntity<ApiResponse<Object>>(apiResponse, HttpStatus.OK);
+	}
+	
 }

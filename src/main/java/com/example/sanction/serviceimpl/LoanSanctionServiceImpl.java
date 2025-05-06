@@ -25,4 +25,41 @@ public class LoanSanctionServiceImpl implements LoanSanctionService
 		loanSanctionRepository.save(loanSanction);
 		return "!!!...Loan Sanction details added SuccessFully...!!!";
 	}
+	
+	
+	@Override
+	public Object getMonthlyEmi(Integer sanctionId) {
+		if(loanSanctionRepository.findById(sanctionId).isPresent())
+		{
+			
+			LoanSanction loanSanction = loanSanctionRepository.findById(sanctionId).get();
+			if(loanSanction.getCibilScore()>=750)
+			{
+				double annualRate=7.99;
+			return 	calculateEMI(loanSanction.getRequestedLoanAmount(), annualRate,loanSanction.getLoanTenureInMonth());
+			}
+			else
+			{
+				double annualRate=8.50;
+				return 	calculateEMI(loanSanction.getRequestedLoanAmount(), annualRate, loanSanction.getLoanTenureInMonth());
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public static double calculateEMI(double requestedLoanAmount, double annualRate, int loanTenureInMonth) {
+	    double monthlyRate = annualRate / 12 / 100;
+	    return (requestedLoanAmount * monthlyRate * Math.pow(1 + monthlyRate, loanTenureInMonth)) /
+	           (Math.pow(1 + monthlyRate, loanTenureInMonth) - 1);
+	}
+
+	
+	
 }
