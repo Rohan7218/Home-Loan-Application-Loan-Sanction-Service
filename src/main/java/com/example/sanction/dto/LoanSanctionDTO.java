@@ -15,5 +15,13 @@ public class LoanSanctionDTO
 	
 	private Integer cibilScore;
 	
+	private Integer loanTenureInMonth;
+	
 	private Long requestedLoanAmount;
+	
+	private Double NetMonthlyIncome;
+	
+	private String IFSC_Code;
+	
+	private Long accountNumber;
 }
