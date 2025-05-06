@@ -38,6 +38,7 @@ public class LoanSanctionServiceImpl implements LoanSanctionService
 				double annualRate=7.99;
 			return 	calculateEMI(loanSanction.getRequestedLoanAmount(), annualRate,loanSanction.getLoanTenureInMonth());
 			}
+			
 			else
 			{
 				double annualRate=8.50;
