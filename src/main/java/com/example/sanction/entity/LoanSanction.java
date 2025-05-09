@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -41,25 +42,28 @@ public class LoanSanction
 	@Column(name ="Contact_Number")
 	private Long contactNo;
 	
+	@Column(name = "Email_Id")
+	private String emailId;
+	
 	@Column(name ="Loan_Sanction_Amount")
-	private Double loanSanctionedAmount;
+	private Double loanSanctionedAmount;    //
 	
 	@Column(name ="Rate_Of_Intereset")
-	private Float rateOfInterest;
+	private Float rateOfInterest;               //
 	
 	@Column(name ="Loan_Tenure_Months")
-	private Integer loanTenureInMonth;
-	
+	private Integer loanTenureInMonth;            //
+	 
 	@Column(name ="Monthly_EMI_Amount")
-	private Double monthlyEmiAmount;
+	private Double monthlyEmiAmount;             //
 	
 	@Column(name ="Mode_Of_Payment")
 	@Enumerated(EnumType.STRING)
-	private ModeOfPaymentEnum modeOfPayment;
+	private ModeOfPaymentEnum modeOfPayment;            //
 	
 	@Column(name ="Loan_Sanction_Status")
 	@Enumerated(EnumType.STRING)
-	private LoanSanctionStatusEnum loanSanctionStatus;
+	private LoanSanctionStatusEnum loanSanctionStatus;        //
 	
 	@Column(name ="Customer_Id")
 	private Integer customerId;
@@ -73,18 +77,31 @@ public class LoanSanction
 	@Column(name ="Request_Loan_Amount")
 	private Long requestedLoanAmount; 
 	
+	@Column(name ="Net_Monthly_Income")
+	private Double NetMonthlyIncome;
+	
+	@Column(name ="IFSC_Code")
+	private String IFSC_Code;
+	
+	@Column(name ="Account_Number")
+	private Long accountNumber;
+	
 	@Column(name ="Processing_Fees")
-	private Double processingFees;
+	private Double processingFees;                    //
 	
 	@Column(name ="Processing_Fees_Status")
-	private Double processingFeesStatus;
+	private Double processingFeesStatus;              //
 	
 	@Column(name ="Emi_Start_date")
-	private LocalDate emiStartDate;
+	private LocalDate emiStartDate;                   //
 	
 	@Column(name ="Emi_End_date")
-	private LocalDate emiEndDate;
+	private LocalDate emiEndDate;                    // 
 	
 	@Column(name ="Disbursment_Date")
-	private LocalDate disbursmentDate;
+	private LocalDate disbursmentDate;              //
+	
+	@Column(name = "Loan_Sanction_Letter_Pdf")
+	@Lob
+	private byte[] generateSanctionLetter;
 }
