@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -40,6 +41,9 @@ public class LoanSanction
 	
 	@Column(name ="Contact_Number")
 	private Long contactNo;
+	
+	@Column(name = "Email_Id")
+	private String emailId;
 	
 	@Column(name ="Loan_Sanction_Amount")
 	private Double loanSanctionedAmount;    //
@@ -96,4 +100,8 @@ public class LoanSanction
 	
 	@Column(name ="Disbursment_Date")
 	private LocalDate disbursmentDate;              //
+	
+	@Column(name = "Loan_Sanction_Letter_Pdf")
+	@Lob
+	private byte[] generateSanctionLetter;
 }
