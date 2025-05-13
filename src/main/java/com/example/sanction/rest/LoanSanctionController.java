@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.GetMapping;
-
-
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sanction.dto.LoanSanctionDTO;
+import com.example.sanction.dto.LoanSanctionStatusSTO;
+import com.example.sanction.dto.ModeOfPaymentDTO;
+import com.example.sanction.dto.UpdateProcessingFeesDTO;
 import com.example.sanction.response.ApiResponse;
 import com.example.sanction.service.LoanSanctionService;
+
 
 @RestController
 @RequestMapping(value = "/api/loansanction")
@@ -51,11 +53,45 @@ public class LoanSanctionController
 	
 	
 	@GetMapping(value = "/{sanctionId}")
-	public ResponseEntity<ApiResponse<Object>> getMonthlyEmi(@PathVariable Integer sanctionId)
+	public ResponseEntity<String> getMonthlyEmi(@PathVariable Integer sanctionId) throws Exception
 	{
-		Object emi=loanSanctionService.getMonthlyEmi(sanctionId);
-		ApiResponse<Object> apiResponse=new ApiResponse<Object>(emi);
-		return new ResponseEntity<ApiResponse<Object>>(apiResponse, HttpStatus.OK);
+		LOGGER.info("LoanSanctionController : GetMapping : getMonthlyEmi : Entry");
+		byte[] pdfBytes=loanSanctionService.getMonthlyEmi(sanctionId);
+		LOGGER.info("LoanSanctionController : GetMapping : getMonthlyEmi : Exit");
+//		return ResponseEntity.ok()
+//		.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Sanction_Letter.pdf")
+//		.contentType(MediaType.APPLICATION_PDF).body(pdfBytes);	
+		
+		return new ResponseEntity<String>("Mail Sent SuccessFully", HttpStatus.OK);
+	}
+	
+	@PatchMapping(value = "/sanctionstatus/{sanctionId}")
+	public ResponseEntity<ApiResponse<String>> updateLoanSanctionStatus(@RequestBody LoanSanctionStatusSTO loanSanctionStatusSTO, @PathVariable Integer sanctionId)
+	{
+		LOGGER.info("LoanSanctionController : PatchMapping : updateLoanSanctionStatus : Entry");
+		String msg=loanSanctionService.updateLoanSanctionStatus(loanSanctionStatusSTO, sanctionId);
+		ApiResponse<String> apiResponse=new ApiResponse<String>(msg);
+		LOGGER.info("LoanSanctionController : PatchMapping : updateLoanSanctionStatus : Entry");		
+		return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/modelofpayment/{sanctionId}")
+	public ResponseEntity<ApiResponse<String>> selectModeOfPayment(@RequestBody ModeOfPaymentDTO modeOfPaymentDTO, @PathVariable Integer sanctionId)
+	{
+		LOGGER.info("LoanSanctionController : PostMapping : selectModeOfPayment : Entry");
+		String msg=loanSanctionService.selectModeOfPayment(modeOfPaymentDTO, sanctionId);
+		ApiResponse<String> apiResponse=new ApiResponse<String>(msg);
+		return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.CREATED);
+	}
+	
+	@PatchMapping(value = "/paymentstatus/{sanctionId}")
+	public ResponseEntity<ApiResponse<String>> updatePaymentStatus(@PathVariable Integer sanctionId, @RequestBody UpdateProcessingFeesDTO updateProcessingFeesDTO)
+	{
+		LOGGER.info("LoanSanctionController : PatchMapping : updatePaymentStatus : Entry");
+		String msg=loanSanctionService.updatePaymentStatus(sanctionId, updateProcessingFeesDTO);
+		ApiResponse<String> apiResponse=new ApiResponse<String>(msg);
+		LOGGER.info("LoanSanctionController : PatchMapping : updatePaymentStatus : Exit");
+		return new ResponseEntity<ApiResponse<String>>(apiResponse, HttpStatus.OK);
 	}
 	
 }

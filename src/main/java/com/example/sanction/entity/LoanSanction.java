@@ -9,12 +9,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.example.sanction.dto.LoanSanctionStatusEnum;
 import com.example.sanction.dto.ModeOfPaymentEnum;
+import com.example.sanction.dto.ProcessingFeesEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +36,7 @@ public class LoanSanction
 	@Id
 	private Integer sanctionId;
 	
+	@CreationTimestamp
 	@Column(name ="Sanction_Date")
 	private LocalDate sanctionDate;
 	
@@ -40,6 +45,9 @@ public class LoanSanction
 	
 	@Column(name ="Contact_Number")
 	private Long contactNo;
+	
+	@Column(name = "Email_Id")
+	private String emailId;
 	
 	@Column(name ="Loan_Sanction_Amount")
 	private Double loanSanctionedAmount;    //
@@ -85,15 +93,11 @@ public class LoanSanction
 	@Column(name ="Processing_Fees")
 	private Double processingFees;                    //
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name ="Processing_Fees_Status")
-	private Double processingFeesStatus;              //
+	private ProcessingFeesEnum processingFeesStatus;              //
 	
-	@Column(name ="Emi_Start_date")
-	private LocalDate emiStartDate;                   //
-	
-	@Column(name ="Emi_End_date")
-	private LocalDate emiEndDate;                    // 
-	
-	@Column(name ="Disbursment_Date")
-	private LocalDate disbursmentDate;              //
+	@Column(name = "Loan_Sanction_Letter_Pdf")
+	@Lob
+	private byte[] generateSanctionLetter;
 }

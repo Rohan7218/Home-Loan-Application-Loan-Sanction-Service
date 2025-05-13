@@ -13,6 +13,8 @@ public class LoanSanctionDTO
 	
 	private Integer appllicantId;
 	
+	private String emailId;
+	
 	private Integer cibilScore;
 	
 	private Integer loanTenureInMonth;
