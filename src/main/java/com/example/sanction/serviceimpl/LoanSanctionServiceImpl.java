@@ -6,19 +6,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.sanction.config.LoanDisbursmentFeignApi;
 import com.example.sanction.config.MailSanctionFeignApi;
+import com.example.sanction.dto.LoanDisbursmentDTO;
 import com.example.sanction.dto.LoanSanctionDTO;
 import com.example.sanction.dto.LoanSanctionMailDTO;
 import com.example.sanction.dto.LoanSanctionStatusEnum;
 import com.example.sanction.dto.LoanSanctionStatusSTO;
+import com.example.sanction.dto.ModeOfPaymentDTO;
+import com.example.sanction.dto.ModeOfPaymentEnum;
+import com.example.sanction.dto.ProcessingFeesEnum;
+import com.example.sanction.dto.UpdateProcessingFeesDTO;
 import com.example.sanction.entity.LoanSanction;
 import com.example.sanction.exceptionHandling.CustomeException;
 import com.example.sanction.pdfgeneration.LoanSanctionPdf;
 import com.example.sanction.pdfgeneration.PdfGenerationService;
 import com.example.sanction.repository.LoanSanctionRepository;
 import com.example.sanction.service.LoanSanctionService;
-
-import lombok.val;
 
 @Service
 public class LoanSanctionServiceImpl implements LoanSanctionService
@@ -37,13 +41,17 @@ public class LoanSanctionServiceImpl implements LoanSanctionService
 	@Autowired
 	private MailSanctionFeignApi mailSanctionFeignApi;
 	
+	@Autowired
+	private LoanDisbursmentFeignApi loanDisbursmentFeignApi;
+	
 	@Override
 	public String addSanctionDetails(LoanSanctionDTO loanSanctionDTO) 
 	{
 		LOGGER.info("LoanSanctionServiceImpl: addSanctionDetails : Entry");
 		LoanSanction loanSanction = modelMapper.map(loanSanctionDTO, LoanSanction.class);
 							 loanSanction.setLoanSanctionStatus(LoanSanctionStatusEnum.VERIFIED);
-						 
+							 loanSanction.setProcessingFeesStatus(ProcessingFeesEnum.UNPAID);
+							 
 		loanSanctionRepository.save(loanSanction);
 		LOGGER.info("LoanSanctionServiceImpl: addSanctionDetails : Exit");
 		return "!!!...Loan Sanction details added SuccessFully...!!!";
@@ -221,6 +229,49 @@ public class LoanSanctionServiceImpl implements LoanSanctionService
 		else
 		{
 			LOGGER.info("LoanSanctionServiceImpl: updateLoanSanctionStatus : Exit");
+			throw new CustomeException("!!!...For Given Sanction Id Rercord Is Not Present...!!!!");
+		}
+	}
+	
+	
+	@Override
+	public String selectModeOfPayment(ModeOfPaymentDTO modeOfPaymentDTO, Integer sanctionId) 
+	{
+		if(loanSanctionRepository.findById(sanctionId).isPresent())
+		{
+			LoanSanction loanSanction = loanSanctionRepository.findById(sanctionId).get();
+								 loanSanction.setModeOfPayment(modeOfPaymentDTO.getModeOfPayment());
+			loanSanctionRepository.save(loanSanction);
+			return "!!!...Mode Of Payment Set SuccessFully...!!!";
+		}
+		else
+		{
+			LOGGER.info("LoanSanctionServiceImpl: selectModeOfPayment : Exit");
+			throw new CustomeException("!!!...For Given Sanction Id Rercord Is Not Present...!!!!");
+		}
+	}
+	
+	@Override
+	public String updatePaymentStatus(Integer sanctionId, UpdateProcessingFeesDTO updateProcessingFeesDTO)
+	{
+		if(loanSanctionRepository.findById(sanctionId).isPresent())
+		{
+			LoanSanction loanSanction = loanSanctionRepository.findById(sanctionId).get();
+								  loanSanction.setProcessingFeesStatus(updateProcessingFeesDTO.getProcessingFeesEnum());
+			
+		   loanSanctionRepository.save(loanSanction);
+		   
+		   if(loanSanction.getProcessingFeesStatus().equals(ProcessingFeesEnum.PAID))
+		   {
+			   LoanDisbursmentDTO loanDisbursmentDTO = modelMapper.map(loanSanction, LoanDisbursmentDTO.class);
+			   loanDisbursmentFeignApi.addDisbursment(loanDisbursmentDTO);
+		   }
+		   LOGGER.info("LoanSanctionServiceImpl: updatePaymentStatus : Exit"); 
+		   return "!!!...Payment Status Updated SuccessFully...!!!";
+		}
+		else
+		{
+			LOGGER.info("LoanSanctionServiceImpl: updatePaymentStatus : Exit");
 			throw new CustomeException("!!!...For Given Sanction Id Rercord Is Not Present...!!!!");
 		}
 	}
